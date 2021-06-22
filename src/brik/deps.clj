@@ -6,6 +6,7 @@
             [ancient-clj.core :as ancient]
             [taoensso.timbre :as log]))
 
+;; TODO allow a single nickname to map to multiple deps
 (def nicknames
   {'clojure    'org.clojure/clojure
 
@@ -17,6 +18,8 @@
    'cli        'org.clojure/tools.cli
    'jdbc       'org.clojure/java.jdbc
    'next.jdbc  'com.github.seancorfield/next.jdbc
+
+   'malli      'metosin/malli
 
    'cheshire   'cheshire/cheshire
    'fs         'clj-commons/fs
@@ -68,8 +71,7 @@
     (log/infof "Adding '%s' version %s to %s" id version alias)
     (log/info "")
     (-> map-loc
-        (z/append-child id)
-        (z/append-child {:mvn/version version})
+        (rw/z-assoc id {:mvn/version version})
         (rw/z-rewind))))
 
 (defn add-mvn-dep*

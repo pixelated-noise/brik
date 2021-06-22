@@ -24,6 +24,11 @@
 (defn z-column [zloc]
   (-> zloc z/node meta :col dec)) ;; columns are 1-based in meta
 
+(defn z-assoc [zloc k v]
+  (-> zloc
+      (z/append-child k)
+      (z/append-child v)))
+
 (defn unterleave
   "Opposite of interleave (assumming 2 colls)"
   [coll]
