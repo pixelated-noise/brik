@@ -1,0 +1,21 @@
+{clojure    org.clojure/clojure
+
+ core.async org.clojure/core.async
+ async      org.clojure/core.async
+ core.match org.clojure/core.match
+ match      org.clojure/core.match
+ tools.cli  org.clojure/tools.cli
+ cli        org.clojure/tools.cli
+ jdbc       org.clojure/java.jdbc
+ next.jdbc  com.github.seancorfield/next.jdbc
+
+ malli      metosin/malli
+ schema     prismatic/schema
+
+ cheshire   cheshire/cheshire
+ fs         clj-commons/fs
+ integrant  integrant/integrant
+ honeysql   com.github.seancorfield/honeysql
+
+ reitit     metosin/reitit
+ timbre     com.taoensso/timbre}

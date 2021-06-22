@@ -4,30 +4,12 @@
             [rewrite-clj.parser :as p]
             [rewrite-clj.node :as n]
             [ancient-clj.core :as ancient]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log]
+            [clojure.java.io :as io]
+            [clojure.edn :as edn]))
 
 ;; TODO allow a single nickname to map to multiple deps
-(def nicknames
-  {'clojure    'org.clojure/clojure
-
-   'core.async 'org.clojure/core.async
-   'async      'org.clojure/core.async
-   'core.match 'org.clojure/core.match
-   'match      'org.clojure/core.match
-   'tools.cli  'org.clojure/tools.cli
-   'cli        'org.clojure/tools.cli
-   'jdbc       'org.clojure/java.jdbc
-   'next.jdbc  'com.github.seancorfield/next.jdbc
-
-   'malli      'metosin/malli
-
-   'cheshire   'cheshire/cheshire
-   'fs         'clj-commons/fs
-   'integrant  'integrant/integrant
-   'honeysql   'com.github.seancorfield/honeysql
-
-   'reitit     'metosin/reitit
-   'timbre     'com.taoensso/timbre})
+(def nicknames (edn/read-string (slurp (io/resource "dep-nicknames.edn"))))
 
 (defn spaces [n]
   (apply str (repeat n " ")))
@@ -87,6 +69,9 @@
   [options]
   (add-mvn-dep* options)
   (shutdown-agents)) ;; this is necessary because of ancient - see https://clojuredocs.org/clojure.core/future
+
+(defn dep-nicknames [_]
+  (print (slurp (io/resource "dep-nicknames.edn"))))
 
 ;; TODO add-alias -> add-depstar
 

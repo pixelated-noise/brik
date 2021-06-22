@@ -1,4 +1,4 @@
-{:paths   ["src"]
+{:paths   ["src" "resources"]
  :deps    {org.clojure/clojure     {:mvn/version "1.10.3"}
            rewrite-clj/rewrite-clj {:mvn/version "1.0.644-alpha"}
            ancient-clj/ancient-clj {:mvn/version "RELEASE"}
