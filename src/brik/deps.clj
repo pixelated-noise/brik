@@ -1,33 +1,33 @@
 (ns brik.deps
-  (:require [rewrite-clj.zip :as z]
+  (:require [brik.rewrite :as rw]
+            [rewrite-clj.zip :as z]
             [rewrite-clj.parser :as p]
             [rewrite-clj.node :as n]
             [ancient-clj.core :as ancient]
-            [taoensso.timbre :as log])
-  (:refer-clojure :exclude [find]))
+            [taoensso.timbre :as log]))
 
 (def nicknames
   {'clojure    'org.clojure/clojure
+
    'core.async 'org.clojure/core.async
+   'async      'org.clojure/core.async
+   'core.match 'org.clojure/core.match
+   'match      'org.clojure/core.match
+   'tools.cli  'org.clojure/tools.cli
+   'cli        'org.clojure/tools.cli
+   'jdbc       'org.clojure/java.jdbc
+   'next.jdbc  'com.github.seancorfield/next.jdbc
+
+   'cheshire   'cheshire/cheshire
+   'fs         'clj-commons/fs
+   'integrant  'integrant/integrant
+   'honeysql   'com.github.seancorfield/honeysql
+
    'reitit     'metosin/reitit
    'timbre     'com.taoensso/timbre})
 
-(defn find [zloc v]
-  (z/find-value zloc z/next v))
-
-(defn z-rewind [zloc]
-  (if (:end? zloc)
-    zloc
-    (let [p (z/up zloc)]
-      (if p
-        (recur p)
-        zloc))))
-
 (defn spaces [n]
   (apply str (repeat n " ")))
-
-(defn z-column [zloc]
-  (-> zloc z/node meta :col dec)) ;; columns are 1-based in meta
 
 (defn resolve-nickname [id]
   (if-let [nick (get nicknames id)]
@@ -47,11 +47,12 @@
 ;; TODO use extra to include extra keys to map
 ;; TODO make it work with empty/non-existent aliases
 ;; TODO add warning for existing deps (but replace them)
+;; TODO make it respect aligned maps
 (defn z-add-mvn-dep [zloc {:keys [id version alias extra] :as options}]
   (let [id      (resolve-nickname id)
         alias   (or alias :deps)
         version (resolve-version id version)
-        map-loc (-> zloc (find alias) z/next)
+        map-loc (-> zloc (rw/z-find alias) z/next)
         _       (when-not map-loc
                   (throw (ex-info (format "Alias %s not found" alias) options)))
         ;; don't do whitespace stuff if this the first dep
@@ -60,7 +61,7 @@
                   (-> map-loc
                       (z/append-child (n/newline-node "\n"))
                       (z/append-child (-> map-loc
-                                          z-column
+                                          rw/z-column
                                           inc
                                           spaces
                                           n/whitespace-node))))]
@@ -69,17 +70,23 @@
     (-> map-loc
         (z/append-child id)
         (z/append-child {:mvn/version version})
-        (z-rewind))))
+        (rw/z-rewind))))
 
-(defn add-mvn-dep* [{:keys [id version alias extra] :as options}]
+(defn add-mvn-dep*
+  "For programmatic/REPL usage"
+  [{:keys [id version alias extra] :as options}]
   (let [id      (if-not (sequential? id) [id] id)
         zloc    (z/of-string (slurp "deps.edn"))
         new-loc (reduce (fn [loc id] (z-add-mvn-dep loc (assoc options :id id))) zloc id)]
     (spit "deps.edn" (z/root-string new-loc))))
 
-(defn add-mvn-dep [options]
+(defn add-mvn-dep
+  "Use this from the command line only"
+  [options]
   (add-mvn-dep* options)
   (shutdown-agents)) ;; this is necessary because of ancient - see https://clojuredocs.org/clojure.core/future
+
+;; TODO add-alias -> add-depstar
 
 (comment
   clojure -Sdeps '{:deps {brik/brik {:local/root "/Users/sideris/devel/brik"}}}' -X brik.deps/add-mvn-dep :id foo/bar :version '"0.5.111"' :path '"pix-erp"'
