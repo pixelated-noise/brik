@@ -76,9 +76,7 @@
 ;; TODO add-alias -> add-depstar
 
 (comment
-  clojure -Sdeps '{:deps {brik/brik {:local/root "/Users/sideris/devel/brik"}}}' -X brik.deps/add-mvn-dep :id foo/bar :version '"0.5.111"' :path '"pix-erp"'
-
-  (def zloc (z/of-string (slurp "/Users/sideris/devel/work/pix-erp/deps.edn")))
+  (def zloc (z/of-string (slurp "/Users/sideris/devel/dummy/deps.edn")))
 
   (-> (z-add-mvn-dep zloc {:id 'foo/bar :version "0.5.222"})
       z/root-string

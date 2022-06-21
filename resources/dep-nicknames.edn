@@ -15,7 +15,9 @@
  cheshire   cheshire/cheshire
  fs         clj-commons/fs
  integrant  integrant/integrant
+
  honeysql   com.github.seancorfield/honeysql
+ datahike   io.replikativ/datahike
 
  reitit     metosin/reitit
  timbre     com.taoensso/timbre}

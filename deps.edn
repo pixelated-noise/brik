@@ -1,11 +1,11 @@
 {:paths   ["src" "resources"]
- :deps    {org.clojure/clojure     {:mvn/version "1.10.3"}
-           rewrite-clj/rewrite-clj {:mvn/version "1.0.644-alpha"}
+ :deps    {org.clojure/clojure     {:mvn/version "1.11.1"}
+           rewrite-clj/rewrite-clj {:mvn/version "1.1.45"}
            ancient-clj/ancient-clj {:mvn/version "RELEASE"}
-           com.taoensso/timbre     {:mvn/version "5.1.2"}
+           com.taoensso/timbre     {:mvn/version "5.2.1"}
 
            ;; shut up warnings
-           org.slf4j/slf4j-api     {:mvn/version "2.0.0-alpha1"}
-           org.slf4j/slf4j-simple  {:mvn/version "2.0.0-alpha1"}}
+           org.slf4j/slf4j-api     {:mvn/version "2.0.0-alpha7"}
+           org.slf4j/slf4j-simple  {:mvn/version "2.0.0-alpha7"}}
  :aliases
  {:add-mvn-dep {:exec-fn brik.deps/add-mvn-dep}}}

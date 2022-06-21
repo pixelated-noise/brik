@@ -42,8 +42,11 @@
     (throw (ex-info "zloc is not pointing to a map" {:zloc zloc :sexpr (z/sexpr zloc)})))
   (every? (partial apply =) (unterleave (map z-column (z-child-locs zloc)))))
 
+(defn align-map [zloc]
+  )
+
 (comment
-  (-> (z/of-string (slurp "/Users/sideris/devel/work/pix-erp/deps.edn"))
+  (-> (z/of-string (slurp "/Users/sideris/devel/dummy/deps.edn"))
       (z-find :deps)
       (z/next)
       (z-aligned-map?)))
