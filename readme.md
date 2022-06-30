@@ -17,12 +17,12 @@
 * developer experience is paramount (and REPL is king)
 * solved things should be available as composable modules
 
-## Terms (also in relationship to other projects)
+## Terms
 
 * Modules: They are like mini-apps, vertical slices of the stack (HTTP, model,
-  database) that could run (almost) independently. They are called "apps" in
-  Django. In Brik, modules are not isolated from each other, the schema of one
-  module can refer to the schema of a different module.
+  database) that could run (almost) independently. They are the equivalent of
+  "apps" in Django. In Brik, modules are not isolated from each other, the
+  schema of one module can refer to the schema of a different module.
 * Facets: Each module has different facets and each implements a different part
   of the module's functionality. One facet could provide the HTTP routes for
   this particular module, another facet could provide the malli schema, and yet
