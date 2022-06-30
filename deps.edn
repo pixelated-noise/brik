@@ -1,5 +1,8 @@
 {:paths   ["src" "resources"]
  :deps    {org.clojure/clojure     {:mvn/version "1.11.1"}
+
+           metosin/malli           {:mvn/version "0.8.8"}
+
            rewrite-clj/rewrite-clj {:mvn/version "1.1.45"}
            ancient-clj/ancient-clj {:mvn/version "RELEASE"}
            com.taoensso/timbre     {:mvn/version "5.2.1"}
