@@ -3,6 +3,8 @@
            rewrite-clj/rewrite-clj {:mvn/version "1.1.45"}
            ancient-clj/ancient-clj {:mvn/version "RELEASE"}
            com.taoensso/timbre     {:mvn/version "5.2.1"}
+           metosin/malli           {:mvn/version "0.8.9"}
+           metosin/reitit          {:mvn/version "0.5.18"}
 
            ;; shut up warnings
            org.slf4j/slf4j-api     {:mvn/version "2.0.0-alpha7"}
