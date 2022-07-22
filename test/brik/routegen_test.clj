@@ -1,8 +1,7 @@
 (ns brik.routegen-test
   (:require [brik.routegen :refer :all]
             [clojure.test :refer :all]
-            [malli.core :as m]
-            [reitit.coercion.malli :as rcm]))
+            [malli.core :as m]))
 
 (def TestModel
   (m/schema 
@@ -24,16 +23,16 @@
 (def TestAPI
   [{:name "test-model"
     :model TestModel
-    :methods [:get :get* :put]
+    :methods [:get :put]
     :index :id}])
 
 (def expected-api
-  [["/test-model/" get*]
-   ["/test-model/:id" {:get get
-                       :put put
-                       :coercion reitit.coercion.malli/coercion
-                       :parameters {:path [:id :int]}}]])
+  [["/test-model"
+    ["/" nil]
+    ["/:id" {:parameters {:path [:id :int]}
+             :get nil
+             :put nil}]]])
 
 (deftest validate-api
   (is (m/validate API TestAPI))
-  (is (= (generate-api TestAPI) expected-api)))
+  (is (= expected-api (vec (generate-api TestAPI)))))
