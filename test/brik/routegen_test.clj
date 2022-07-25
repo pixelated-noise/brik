@@ -11,27 +11,24 @@
     [:cat? :boolean]
     [:datetime [:or :string :int]]]))
 
-(defn get* [_]
-  {:status 200 :body []})
-
-(defn get [_]
-  {:status 200 :body {}})
-
-(defn put [{:keys [parameters]}]
-  {:status 200 :body (-> parameters :body)})
-
 (def TestAPI
   [{:name "test-model"
     :model TestModel
-    :methods [:get :put]
     :index :id}])
 
 (def expected-api
-  [["/test-model"
-    ["/" nil]
-    ["/:id" {:parameters {:path [:id :int]}
-             :get nil
-             :put nil}]]])
+  [(str "/test-model")
+   ["/" {:get {:responses {200 [TestModel]}}
+         :post {:parameters {:body TestModel}
+                :responses {200 TestModel}}}]
+   [(str "/:id")
+    {:get {:parameters {:path [:id :int]}
+           :responses {200 TestModel}}
+     :patch {:parameters {:path [:id :int]
+                          :body TestModel}
+             :responses {200 TestModel}}
+     :delete {:parameters {:path [:id :int]}
+              :responses {200 "OK"}}}]])
 
 (deftest validate-api
   (is (m/validate API TestAPI))
