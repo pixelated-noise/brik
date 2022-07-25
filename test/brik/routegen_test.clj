@@ -2,8 +2,9 @@
   (:require [brik.routegen :refer :all]
             [clojure.test :refer :all]
             [malli.core :as m]
-            [malli.util :as mu]
-            [clojure.walk :as w]))
+            [clojure.walk :as w]
+            [reitit.core :as r]
+            [reitit.spec :as rs]))
 
 (def TestModel
   (m/schema 
@@ -42,7 +43,25 @@
    #(if (m/schema? %) (m/form %) %)
    tree))
 
+(def generated-api (generate-api TestAPI))
+(def router (r/router generated-api {:validate rs/validate}))
+
 (deftest validate-api
   (is (m/validate API TestAPI))
-  (is (= (render-schemas expected-api) 
-         (render-schemas (generate-api TestAPI)))))
+  (is (= (render-schemas expected-api)
+         (render-schemas generated-api)))
+  (is (= [:get :post]
+         (-> router
+             (r/match-by-path "/test-model/")
+             :data
+             keys)))
+  (is (= [:get :patch :delete]
+         (-> router
+             (r/match-by-path "/test-model/4")
+             :data
+             keys)))
+  (is (= "4"
+         (-> router
+             (r/match-by-path "/test-model/4")
+             :path-params
+             :id))))

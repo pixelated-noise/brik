@@ -1,7 +1,5 @@
 (ns brik.routegen
-  (:require [malli.core :as m]
-            [reitit.core :as r]
-            [reitit.coercion.malli :as rcm]))
+  (:require [malli.core :as m]))
 
 (def Route (m/schema
             [:map
