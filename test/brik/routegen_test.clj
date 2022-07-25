@@ -1,10 +1,13 @@
 (ns brik.routegen-test
   (:require [brik.routegen :refer :all]
             [clojure.test :refer :all]
-            [malli.core :as m]
             [clojure.walk :as w]
+            [malli.core :as m]
+            [reitit.coercion :as coercion]
+            reitit.coercion.malli
             [reitit.core :as r]
-            [reitit.spec :as rs]))
+            [reitit.ring :as ring]
+            [reitit.ring.spec :as rrs]))
 
 (def TestModel
   (m/schema 
@@ -21,6 +24,7 @@
 
 (def expected-api
   [[(str "/test-model")
+    {:coercion reitit.coercion.malli/coercion}
     ["/" {:get {:responses {200 [TestModel]}}
           :post {:parameters {:body TestModel}
                  :responses {200 TestModel}}}]
@@ -44,24 +48,30 @@
    tree))
 
 (def generated-api (generate-api TestAPI))
-(def router (r/router generated-api {:validate rs/validate}))
+(def router (ring/router generated-api
+                         {:validate rrs/validate
+                          :compile coercion/compile-request-coercers}))
+
+(defn match-by-path-and-coerce! [path]
+  (when-let [match (r/match-by-path router path)]
+    (assoc match :parameters (coercion/coerce! match))))
 
 (deftest validate-api
   (is (m/validate API TestAPI))
   (is (= (render-schemas expected-api)
          (render-schemas generated-api)))
-  (is (= [:get :post]
+  (is (= [:coercion :get :post]
          (-> router
              (r/match-by-path "/test-model/")
              :data
              keys)))
-  (is (= [:get :patch :delete]
+  (is (= [:coercion :get :patch :delete]
          (-> router
              (r/match-by-path "/test-model/4")
              :data
              keys)))
-  (is (= "4"
-         (-> router
-             (r/match-by-path "/test-model/4")
-             :path-params
+  (is (nil? (r/match-by-path router "/test-model/foo")))
+  (is (= 4
+         (-> (match-by-path-and-coerce! "/test-model/4")
+             :parameters
              :id))))

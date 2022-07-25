@@ -1,5 +1,6 @@
 (ns brik.routegen
-  (:require [malli.core :as m]))
+  (:require [malli.core :as m]
+            reitit.coercion.malli))
 
 (def Route (m/schema
             [:map
@@ -18,9 +19,8 @@
                               (into {})
                               index
                               m/children
-                              first
-                              m/type)]
-         [(str "/" name)
+                              first)]
+         [(str "/" name) {:coercion reitit.coercion.malli/coercion}
           ["/" {:get {:responses {200 [model]}}
                 :post {:parameters {:body model}
                        :responses {200 model}}}]
