@@ -1,19 +1,19 @@
 (ns brik.routegen
   (:require [malli.core :as m]))
 
-(def Route (m/schema
-            [:map
-             [:name :string]
-             [:model :any]
-             [:index :keyword]]))
-
-(def API (m/schema [:vector Route]))
+(def API (m/schema [:vector :any]))
 
 (defn generate-api [api]
   (when (m/validate API api)
     (vec
-     (for [{:keys [name model index] :as route} api]
-       (let [index-model (->> model
+     (for [model api]
+       (let [name (:brik.api/name (m/properties model))
+             index (->> model
+                        m/children
+                        (filter #(:brik.api/index (second %)))
+                        first
+                        first)
+             index-model (->> model
                               m/entries
                               (into {})
                               index

@@ -8,16 +8,14 @@
 
 (def TestModel
   (m/schema 
-   [:map
-    [:id :int]
+   [:map {:brik.api/name "test-model"}
+    [:id {:brik.api/index true} :int]
     [:name :string]
     [:cat? :boolean]
     [:datetime [:or :string :int]]]))
 
 (def TestAPI
-  [{:name "test-model"
-    :model TestModel
-    :index :id}])
+  [TestModel])
 
 (def expected-api
   [[(str "/test-model")
