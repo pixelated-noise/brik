@@ -11,8 +11,7 @@
              index (->> model
                         m/children
                         (filter #(:brik.api/index (second %)))
-                        first
-                        first)
+                        ffirst)
              index-model (->> model
                               m/entries
                               (into {})
