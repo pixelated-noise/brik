@@ -1,0 +1,73 @@
+This could be the ~module.edn~ file present in every module:
+
+#+BEGIN_SRC clojure
+  {:name   brik/user-management
+   :facets {:routes  {:type    reitit/routes
+                      :content brik.user-management/routes}
+            :schemas {:type    malli/schemas
+                      :content [var1 var2 var3]}
+            :db      {:type    ...}}}
+#+END_SRC
+
+But how to you make it so that it works for very simple CRUD modules that have
+stock routes and DB facets?
+
+The above could be a config and an internal data representation on which brik
+core functions will be able to act in order to produce the final module. So the
+entry point for a module is not a EDN config file, but a constructor function
+that returns something like the EDN above:
+
+#+BEGIN_SRC clojure
+  (ns my-module.module
+    (:require [brik.infer.routes :as routes]
+              [brik.infer.db :as db]
+              [my-module.model :as model]))
+
+  (defn build [args]
+    (let [model {:type    'malli/schemas
+                 :content [model/user
+                           model/company
+                           model/address]}]
+      (-> {:name   brik/user-management
+           :facets {:schemas {:type    'malli/schemas
+                              :content [::model/user
+                                        ::model/company
+                                        ::model/address]}}}
+          (db/merge-facet-malli-crud :db)
+          (routes/merge-facet-db-routes :routes))))
+#+END_SRC
+
+Let's have a look at what's going on in slow motion:
+
+#+BEGIN_SRC clojure
+  (-> {:name   brik/user-management
+       :facets {:schemas {:type    'malli/schemas
+                          :content [::model/user
+                                    ::model/company
+                                    ::model/address]}}}
+      (db/merge-facet-malli-crud :db))
+#+END_SRC
+
+Produces something like:
+
+#+BEGIN_SRC clojure
+  {:name   brik/user-management
+   :facets {:schemas {:type    malli/schemas
+                      :content [::model/user
+                                ::model/company
+                                ::model/address]}
+            :db      {:type    sql/persistence-functions
+                      :content {::model/user    {:create       #function[...]
+                                                 :get          #function[...]
+                                                 :update       #function[...]
+                                                 :delete       #function[...]
+                                                 :multi-create #function[...]
+                                                 :multi-get    #function[...]
+                                                 :multi-update #function[...]
+                                                 :multi-delete #function[...]}
+                                ::model/company {...}
+                                ::model/address {...}}}}}
+#+END_SRC
+
+Where all the functions accept a DB object and EDN data to perform the various
+CRUD operations.
