@@ -33,8 +33,8 @@ that returns something like the EDN above:
                               :content [::model/user
                                         ::model/company
                                         ::model/address]}}}
-          (db/merge-facet-malli-crud :db)
-          (routes/merge-facet-db-routes :routes))))
+          (db/merge-facet-malli-crud :db :schemas)
+          (routes/merge-facet-db-routes :routes :db))))
 #+END_SRC
 
 Let's have a look at what's going on in slow motion:
@@ -45,7 +45,7 @@ Let's have a look at what's going on in slow motion:
                           :content [::model/user
                                     ::model/company
                                     ::model/address]}}}
-      (db/merge-facet-malli-crud :db))
+      (db/merge-facet-malli-crud :db :schemas)) ;; add a facet called :db based on :schemas
 #+END_SRC
 
 Produces something like:
@@ -70,4 +70,5 @@ Produces something like:
 #+END_SRC
 
 Where all the functions accept a DB object and EDN data to perform the various
-CRUD operations.
+CRUD operations. Similarly, `(routes/merge-facet-db-routes :routes :db)` will
+add another facet called `:routes`, based on the contents on the `:db` facet.
