@@ -70,5 +70,5 @@ Produces something like:
 #+END_SRC
 
 Where all the functions accept a DB object and EDN data to perform the various
-CRUD operations. Similarly, `(routes/merge-facet-db-routes :routes :db)` will
-add another facet called `:routes`, based on the contents on the `:db` facet.
+CRUD operations. Similarly, ~(routes/merge-facet-db-routes :routes :db)~ will
+add another facet called ~:routes~, based on the contents on the ~:db~ facet.
