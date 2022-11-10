@@ -1,3 +1,5 @@
+* Speculative usage patterns
+
 This could be the ~module.edn~ file present in every module:
 
 #+BEGIN_SRC clojure
