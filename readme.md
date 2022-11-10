@@ -1,4 +1,8 @@
+***This project exists as documentation/design documents only, we're still in the hammock phase***
+
 # brik
+
+Clojure web framework.
 
 ## Scope
 
