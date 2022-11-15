@@ -128,6 +128,27 @@ The mortar code for merging modules into a single app uses the ~merge-facet~
 function for each type of facet to merge all the modules together into a unified
 app.
 
-** Times
+** Brik algebra
+
+Some common mortar verbs:
+
+- merge-facet: merge a facet into an existing modulke
+- merge-modules: merge two modules with each other
+- rename-facets: ~rename-keys~-like functionality for all the facets of a module
+- inference: creating a facet based on a different facet (e.g. database CRUD
+  functions inferred from a malli model, reitit routes inferred from database
+  CRUD functions etc)
+
+** Validation when merging
 
 ???
+
+** Times
+
+Different Brik "times":
+
+- runtime
+- test time
+- validation time
+- deployment time
+- infra-setup time
