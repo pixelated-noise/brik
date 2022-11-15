@@ -153,3 +153,20 @@ Different Brik "times":
 - deployment time
 - infra-setup time
 - db-migration time
+
+The default is runtime. I'm very unclear about how to model this.
+
+What needs to happen at db-migration time:
+
+- read current malli
+- read previous malli (how???)
+- figure out the diff between the schemas
+- produce SQL that corresponds to the diff
+- connect to a database using the correct credentials and execute the SQL
+
+** Open questions
+
+- Where do credentials go?
+- How are multiple envs modelled?
+- Are the previous two even in scope?
+- What's Brik's relationship to integrant?
