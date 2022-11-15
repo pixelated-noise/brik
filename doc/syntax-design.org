@@ -3,10 +3,10 @@
 This could be the ~module.edn~ file present in every module:
 
 #+BEGIN_SRC clojure
-  {:name   brik/user-management
-   :facets {:routes  {:type    reitit/routes
+  {:name   :brik/user-management
+   :facets {:routes  {:type    :reitit/routes
                       :content brik.user-management/routes}
-            :schemas {:type    malli/schemas
+            :schemas {:type    :malli/schemas
                       :content [var1 var2 var3]}
             :db      {:type    ...}}}
 #+END_SRC
@@ -26,23 +26,19 @@ that returns something like the EDN above:
               [my-module.model :as model]))
 
   (defn build [args]
-    (let [model {:type    'malli/schemas
-                 :content [model/user
-                           model/company
-                           model/address]}]
-      (-> {:name   brik/user-management
-           :facets {:schemas {:type    'malli/schemas
-                              :content [::model/user
-                                        ::model/company
-                                        ::model/address]}}}
-          (db/merge-facet-malli-crud :db :schemas)
-          (routes/merge-facet-db-routes :routes :db))))
+    (-> {:name   :brik/user-management
+         :facets {:schemas {:type    :malli/schemas
+                            :content [::model/user
+                                      ::model/company
+                                      ::model/address]}}}
+        (db/merge-facet-malli-crud :db :schemas)
+        (routes/merge-facet-db-routes :routes :db)))
 #+END_SRC
 
 Let's have a look at what's going on in slow motion:
 
 #+BEGIN_SRC clojure
-  (-> {:name   brik/user-management
+  (-> {:name   :brik/user-management
        :facets {:schemas {:type    'malli/schemas
                           :content [::model/user
                                     ::model/company
@@ -53,12 +49,12 @@ Let's have a look at what's going on in slow motion:
 Produces something like:
 
 #+BEGIN_SRC clojure
-  {:name   brik/user-management
+  {:name   :brik/user-management
    :facets {:schemas {:type    malli/schemas
                       :content [::model/user
                                 ::model/company
                                 ::model/address]}
-            :db      {:type    sql/crud
+            :db      {:type    :sql/crud
                       :content {::model/user    {:create       #function[...]
                                                  :get          #function[...]
                                                  :update       #function[...]
@@ -81,8 +77,9 @@ expose these operations via HTTP.
 Notice that the functions we've seen up to now that act on the module all have
 the prefix ~merge-facet-~. This is because the facets that get inferred from
 other existing facets of the module are not simply added to the facets submap
-(effectively overwriting any existing facets with the same name), but they are
-merged with any existing facets with the same name that are already there.
+(which would effectively overwrite any existing facets with the same name), but
+they are merged with any existing facets with the same name that are already
+there.
 
 This is an escape hatch that allows a module to mix both hand-written and
 inferred code into a simple facet. This takes advantage of /mortar/ functions
@@ -96,6 +93,34 @@ of two operations:
 
 The mortar code in ~db/merge-facet~ will ensure that the facets being merged do
 not overwrite each other and throw an error if they do.
+
+In light of this, we can rewrite the previous code in a simpler, but more
+tedious, way:
+
+#+BEGIN_SRC clojure
+  (ns my-module.module
+    (:require [brik.infer.routes :as routes]
+              [brik.infer.db :as db]
+              [brik.mortar :as m]
+              [my-module.model :as model]))
+
+  (defn build [args]
+    (let [module {:name   :brik/user-management
+                  :facets {:schemas {:type    :malli/schemas
+                                     :content [::model/user
+                                               ::model/company
+                                               ::model/address]}}}]
+      (as-> module $
+        (update-in $ [:facets :db]
+                   #(m/merge-facet % (db/malli->crud-map (get-in $ [:facets :schemas]))))
+        (update-in $ [:facets :routes]
+                   #(m/merge-facet % (db/malli->crud-map (get-in $ [:facets :db])))))))
+#+END_SRC
+
+Less convenient, but it helps you see what's going on. Of course, in this case
+we know that the original module does not have any hand-coded ~:db~ nor
+~:routes~ facets, so using ~m/merge-facet~ is unnecessary, but I tried to write
+the equivalent code as before.
 
 ** Merging modules
 
