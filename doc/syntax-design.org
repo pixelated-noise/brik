@@ -152,3 +152,4 @@ Different Brik "times":
 - validation time
 - deployment time
 - infra-setup time
+- db-migration time
