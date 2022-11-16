@@ -23,22 +23,22 @@ Clojure web framework.
 
 ## Terms
 
-* Modules: They are like mini-apps, vertical slices of the stack (each can
+* **Modules**: They are like mini-apps, vertical slices of the stack (each can
   include HTTP routes, a malli schema, database) that could run (almost)
   independently. They are the equivalent of "apps" in Django. In Brik, modules
   are not isolated from each other, the schema of one module can refer to the
   schema of a different module.
-* Facets: Each module has different facets and each implements a different part
-  of the module's functionality. One facet could provide the HTTP routes for
-  this particular module, another facet could provide the malli schema, and yet
-  another could provide the database schema. All the facets are optional, so
+* **Facets**: Each module has different facets and each implements a different
+  part of the module's functionality. One facet could provide the HTTP routes
+  for this particular module, another facet could provide the malli schema, and
+  yet another could provide the database schema. All the facets are optional, so
   it's entirely possible for a module to have a malli schema facet without
   providing any HTTP routes.
-* Mortar: The part of Brik code that accepts multiple modules and connects them
-  together into a single application. Mortar code is also responsible for
+* **Mortar**: The part of Brik code that accepts multiple modules and connects
+  them together into a single application. Mortar code is also responsible for
   validating that the modules can be combined and reporting any errors
   concerning unmet requirements or clashes between modules.
-* Times: Different facets of modules are used at different "times". The HTTP
+* **Times**: Different facets of modules are used at different "times". The HTTP
   route facets are used at "run time" in order to construct the HTTP service,
   malli schemas are used at "migration time" to migrate the database, the CI
   facet is used to generate the CI code during "ops time".
