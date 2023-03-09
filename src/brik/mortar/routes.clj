@@ -30,6 +30,14 @@
     (->> (merge m1 m2)
          (into []))))
 
+(defn merge-facet
+  "Merges new-routes into the :routes facet of the module. You can merge the
+  routes into a custom facet by using the 3-arity version."
+  ([module new-routes]
+   (merge-facet module new-routes :routes))
+  ([module new-routes facet]
+   (update-in module [:facets :routes] merge-routes new-routes)))
+
 (comment
   (defn handler [_]
     {:status 200, :body "ok"})
