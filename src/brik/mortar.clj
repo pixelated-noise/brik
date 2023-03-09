@@ -1,7 +1,7 @@
 (ns brik.mortar
   (:require [clojure.set :as set]))
 
-(defmulti merge-facet* (fn [module new-facet facet-key] facet-key))
+(defmulti merge-facet* (fn [module new-facet facet-key] (:type new-facet)))
 
 (defn merge-facet [module new-facet facet-key]
   (let [orig-facet (get-in module [:facets facet-key])]
@@ -25,3 +25,26 @@
 
 (defn rename-facets [module kmap]
   (update module :facets #(set/rename-keys % kmap)))
+
+
+(comment
+  (def user-management
+    {:name   :brik/user-management
+     :facets {:routes  {:type    :reitit/routes
+                        :content ["/api/user"
+                                  ["/create" {:post (fn [])}]
+                                  ["/update" {:post (fn [])}]
+                                  ["/delete" {:post (fn [])}]]}}})
+
+  (def recipe-management
+    {:name   :brik/recipe-management
+     :facets {:routes  {:type    :reitit/routes
+                        :content ["/api/recipe"
+                                  ["/create" {:post (fn [])}]
+                                  ["/update" {:post (fn [])}]
+                                  ["/delete" {:post (fn [])}]]}}})
+
+  (def app
+    {:name :my-app})
+
+  (merge-module app user-management))

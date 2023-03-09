@@ -37,7 +37,7 @@
   ([module new-routes]
    (if-not new-routes
      module
-     (merge-facet module new-routes :routes)))
+     (merge-into-module module new-routes :routes)))
   ([module new-routes facet-key]
    (update-in module [:facets facet-key :content] merge-routes new-routes)))
 
