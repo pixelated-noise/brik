@@ -132,7 +132,7 @@ app.
 
 Some common mortar verbs:
 
-- merge-facet: merge a facet into an existing modulke
+- merge-facet: merge a facet into an existing module
 - merge-modules: merge two modules with each other
 - rename-facets: ~rename-keys~-like functionality for all the facets of a module
 - inference: creating a facet based on a different facet (e.g. database CRUD
@@ -160,8 +160,8 @@ What needs to happen at db-migration time:
 
 - read current malli
 - read previous malli (how???)
-- figure out the diff between the schemas
-- produce SQL that corresponds to the diff
+- figure out the diff between the malli schemas
+- produce SQL that corresponds to the diff of the malli schemas
 - connect to a database using the correct credentials and execute the SQL
 
 ** Open questions
