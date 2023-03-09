@@ -1,5 +1,6 @@
 (ns brik.mortar.routes
   (:require [clojure.set :as set]
+            [brik.mortar :as m]
             [reitit.core :as reitit]
             [reitit.trie :as rt]))
 
@@ -30,13 +31,18 @@
     (->> (merge m1 m2)
          (into []))))
 
-(defn merge-facet
+(defn merge-into-module
   "Merges new-routes into the :routes facet of the module. You can merge the
   routes into a custom facet by using the 3-arity version."
   ([module new-routes]
-   (merge-facet module new-routes :routes))
-  ([module new-routes facet]
-   (update-in module [:facets :routes] merge-routes new-routes)))
+   (if-not new-routes
+     module
+     (merge-facet module new-routes :routes)))
+  ([module new-routes facet-key]
+   (update-in module [:facets facet-key :content] merge-routes new-routes)))
+
+(defmethod m/merge-facet* :reitit/routes [module new-facet facet-key]
+  (merge-into-module module (:content new-facet) facet-key))
 
 (comment
   (defn handler [_]
