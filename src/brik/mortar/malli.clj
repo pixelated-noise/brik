@@ -32,7 +32,7 @@
     (throw (ex-info "Cannot merge malli schemas with conflicts" {:conflicts conflicts})))
   (let [merged (merge (malli/default-schemas) a b)]
     (when-let [errors (registry-errors merged)]
-      (throw (ex-info "Unknown references in malli schemas" {:unknown errors})))
+      (throw (ex-info "Cannot merge malli schemas, they contain unknown references" {:unknown errors})))
     merged))
 
 (defn merge-into-module [module new-schema facet-key]
