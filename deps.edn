@@ -5,6 +5,7 @@
            com.taoensso/timbre     {:mvn/version "5.2.1"}
 
            metosin/reitit          {:mvn/version "0.6.0"}
+           metosin/malli           {:mvn/version "0.10.2"}
 
            ;; shut up warnings
            org.slf4j/slf4j-api     {:mvn/version "2.0.0-alpha7"}
