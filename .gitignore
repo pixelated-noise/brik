@@ -1,0 +1,6 @@
+.clj-kondo/
+.cpcache/
+.lsp/
+.vscode/
+.nrepl-port
+.calva/output-window/output.calva-repl
